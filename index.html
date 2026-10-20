@@ -1,12 +1,10 @@
 <!doctype html>
-<html lang="zh-Hant"><head><meta charset="utf-8"><title>膽曼 Sa'opo 歌謠採譜聽校</title>
+<html lang="zh-Hant"><head><meta charset="utf-8"><title>膽曼 Sa'opo 生活歌謠採譜</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@500;600&display=swap" rel="stylesheet">
 <style>
 body{margin:0;font-family:-apple-system,"PingFang TC",sans-serif;background:#fff}
-#intro{padding:8px 12px;font-size:14px;color:#333;background:#eef4ff;border-bottom:1px solid #d6e2f5}
-#intro b{font-size:16px}
-#dl{flex-basis:100%;font-size:14px}#dl summary{cursor:pointer;font-weight:600}
-#dllist{display:flex;flex-wrap:wrap;gap:6px 14px;padding:6px 0}#dllist a{color:#1a5fb4}
-#report{color:#b03a2e}
 header{position:sticky;top:0;z-index:1;background:#f4f4f4;padding:8px 12px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;border-bottom:1px solid #ddd}
 select,button{font-size:15px}audio{width:420px;max-width:100%}
 #status{font-size:13px;color:#555;flex-basis:100%;min-height:18px}
@@ -28,15 +26,47 @@ body{padding-bottom:var(--kbh,48px)}
 .kb .w.do{color:#c0392b}
 .kb .w.chroma,.kb .b.chroma{font-weight:400;opacity:.65}
 #f img{width:100%;max-width:900px;display:block;margin:0 auto}
+
+:root{--paper:#f6f3ec;--card:#fffdf8;--ink:#23302f;--mute:#6f7772;--sea:#2e5e63;--sea2:#8fb1ad;--line:#ddd5c6;--gut:max(16px,calc(50% - 450px))}
+body{background:var(--paper);color:var(--ink)}
+#top{position:relative;display:flex;justify-content:space-between;align-items:flex-start;gap:16px;padding:30px var(--gut) 26px;background:linear-gradient(180deg,#e9efeb,var(--paper))}
+#top::after{content:"";position:absolute;left:0;right:0;bottom:2px;height:14px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='14' viewBox='0 0 120 14'%3E%3Cpath d='M0 7 Q15 1 30 7 T60 7 T90 7 T120 7' fill='none' stroke='%232e5e63' stroke-width='1'/%3E%3C/svg%3E") repeat-x;opacity:.35}
+.eyebrow{font-size:12px;letter-spacing:.24em;color:var(--sea)}
+#top h1{font-family:"Noto Serif TC",serif;font-weight:600;font-size:clamp(24px,5vw,34px);letter-spacing:.08em;margin:8px 0 6px}
+.lede{margin:0;color:var(--mute);font-size:14px;letter-spacing:.05em}
+header{background:rgba(246,243,236,.92);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px var(--gut)}
+#sub{background:transparent;border:0;padding:8px var(--gut)}
+select,button{font:inherit;font-size:14px;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:999px;padding:5px 14px;cursor:pointer}
+select#s{font-family:"Noto Serif TC",serif;font-size:16px;padding:6px 14px;max-width:100%}
+button:hover,select:hover{border-color:var(--sea2)}
+input[type=radio],input[type=range]{accent-color:var(--sea)}
+header label,#sybar,#kbbar{color:var(--ink)}
+audio{height:36px}
+#status{color:var(--mute)}#syinfo{color:var(--sea)}
+#f{padding:4px 16px 32px}
+#f img{background:#fff;border-radius:6px;box-shadow:0 1px 2px rgba(0,0,0,.05),0 10px 28px rgba(40,55,50,.09);margin:16px auto}
+#kbfoot{background:rgba(246,243,236,.95);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-top:1px solid var(--line);padding:6px var(--gut)}
+#dl{position:relative;flex:none}
+#dl summary{list-style:none;cursor:pointer;font-size:14px;letter-spacing:.12em;border:1px solid var(--sea);color:var(--sea);border-radius:999px;padding:7px 18px;background:var(--card)}
+#dl summary::-webkit-details-marker{display:none}
+#dl summary::after{content:" ▾";font-size:11px}
+#dl[open] summary{background:var(--sea);color:#fff}
+#dllist{position:absolute;right:0;top:calc(100% + 8px);z-index:5;width:270px;max-width:calc(100vw - 32px);background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:0 14px 36px rgba(30,45,42,.16);padding:8px 0}
+#dllist h4{margin:10px 16px 4px;font-size:12px;letter-spacing:.14em;color:var(--mute);font-weight:500}
+#dllist a{display:flex;justify-content:space-between;gap:12px;padding:7px 16px;color:var(--ink);text-decoration:none;font-size:14px}
+#dllist a span{color:var(--mute);font-size:12px}
+#dllist a:hover{background:#ecf2f0;color:var(--sea)}
+#dllist hr{border:0;border-top:1px solid var(--line);margin:6px 0}
 </style></head><body>
-<div id="intro"><b>膽曼 Sa'opo 生活歌謠｜女聲主旋律採譜（九首定稿）</b><br>選歌號後可看譜、聽慢速錄音；「🎼 譜音」可讓譜與錄音一起播放。發現譜和錄音不合，請按「回報問題」並寫小節號。</div>
+<div id="top"><div><div class="eyebrow">Sa'opo 膽曼 · 生活歌謠</div><h1>女聲主旋律採譜</h1><p class="lede">九首定稿　五線譜＋簡譜・慢速錄音・譜音對照</p></div>
+<details id="dl"><summary>下載</summary><div id="dllist"></div></details></div>
 <header><select id="s" aria-label="歌號"></select>
 <label><input type="radio" name="k" value="C調" checked>C調</label>
 <label><input type="radio" name="k" value="原調">原調</label>
 <label>速度 <select id="r"><option value="0.75">0.75倍</option><option value="0.5">0.5倍</option></select></label>
 <audio id="a" controls preload="metadata"></audio>
 </header>
-<div id="sub"><div id="sybar"><button id="sytoggle" type="button">🎼 譜音</button>
+<div id="sub"><div id="sybar"><button id="sytoggle" type="button">譜音對照</button>
 <span id="syopts" hidden>
 <button id="sysolo" type="button">▶ 只播譜音</button>
 <button id="syset" type="button" title="播到譜上第一個音時按">設為譜的第一個音</button>
@@ -45,11 +75,10 @@ body{padding-bottom:var(--kbh,48px)}
 <label>錄音音量 <input id="syav" type="range" min="0" max="100" value="100"></label>
 <label>譜音音量 <input id="sysv" type="range" min="0" max="100" value="60"></label>
 <span id="syinfo"></span></span></div>
-<details id="dl"><summary>⬇ 下載</summary><div id="dllist"></div></details>
 <div id="status" role="status" aria-live="polite"></div></div>
 <div id="f"></div>
 <footer id="kbfoot">
-<div id="kbbar"><button id="kbtoggle" type="button">🎹 鍵盤</button>
+<div id="kbbar"><button id="kbtoggle" type="button">鍵盤</button>
 <span id="kbopts" hidden><label><input type="radio" name="kbm" value="rec" checked>對齊錄音音高</label>
 <label><input type="radio" name="kbm" value="C">C調（1＝C）</label>
 <span id="kbinfo"></span></span></div>
@@ -229,25 +258,25 @@ setInterval(()=>{if(sy.on)syLoad();},1500); // 譜更新後自動換新 MIDI
 try{if(localStorage.getItem('saopo-sy')==='1')syEl('sytoggle').click();}catch{}
 const kbfoot=document.getElementById('kbfoot');new ResizeObserver(()=>document.body.style.setProperty('--kbh',kbfoot.offsetHeight+8+'px')).observe(kbfoot);
 renderScore();renderAudio();poll();
-// ---- 下載與回報 ----
-const dllist=document.getElementById('dllist');
-function dlLink(path,text){const e=document.createElement('a');e.href=encodeURI(path);e.download=path.split('/').pop();e.textContent=text;return e;}
+// ---- 下載選單 ----
+const dl=document.getElementById('dl'),dllist=document.getElementById('dllist');
+function dlLink(path,text,ext){const e=document.createElement('a');e.href=encodeURI(path);e.download=path.split('/').pop();e.textContent=text;const t=document.createElement('span');t.textContent=ext;e.appendChild(t);return e;}
+function dlHead(text){const e=document.createElement('h4');e.textContent=text;return e;}
 function renderDl(){
- const n=s.value,lab=n==='5'?'B調':'原調'+keys[n],d='第'+n+'首/第'+n+'首_',k=selectedKey();
- dllist.replaceChildren(
-  dlLink(d+'五線譜＋簡譜_女聲主旋律_C調.pdf','第'+n+'首 C調譜 PDF'),
-  dlLink(d+'五線譜＋簡譜_女聲主旋律_'+lab+'.pdf','第'+n+'首 '+lab+'譜 PDF'),
-  dlLink(d+'旋律_女聲主旋律_C調.mid','C調 MIDI'),
-  dlLink(d+'旋律_女聲主旋律_'+lab+'.mid',lab+' MIDI'),
-  dlLink(d+'0.75倍慢速.mp3','0.75倍慢速 mp3'),
-  dlLink(d+'0.5倍慢速.mp3','0.5倍慢速 mp3'),
-  dlLink('九首合輯_女聲主旋律_C調.pdf','九首合輯 C調 PDF'),
-  dlLink('九首合輯_女聲主旋律_原調.pdf','九首合輯 原調 PDF'),
-  dlLink('全部譜與MIDI.zip','全部譜與 MIDI（zip）'));
- const rp=document.createElement('a');rp.id='report';rp.target='_blank';rp.rel='noopener';rp.textContent='📝 回報問題';
- rp.href='https://github.com/laierin615/saopo-songs-review/issues/new?title='+encodeURIComponent('第'+n+'首 '+k+' 第＿小節')+'&body='+encodeURIComponent('歌曲：第'+n+'首 '+titles[n]+'\n譜：'+k+'\n小節：\n錄音時間（約幾秒）：\n問題（音高／節奏／歌詞）：\n建議改成：\n');
- dllist.appendChild(rp);
+ const n=s.value,lab=n==='5'?'B調':'原調'+keys[n],d='第'+n+'首/第'+n+'首_';
+ dllist.replaceChildren(dlHead('第'+n+'首　'+titles[n]),
+  dlLink(d+'五線譜＋簡譜_女聲主旋律_C調.pdf','C調譜','PDF'),
+  dlLink(d+'五線譜＋簡譜_女聲主旋律_'+lab+'.pdf',lab+'譜','PDF'),
+  dlLink(d+'旋律_女聲主旋律_C調.mid','C調旋律','MIDI'),
+  dlLink(d+'旋律_女聲主旋律_'+lab+'.mid',lab+'旋律','MIDI'),
+  dlLink(d+'0.75倍慢速.mp3','0.75倍慢速錄音','MP3'),
+  dlLink(d+'0.5倍慢速.mp3','0.5倍慢速錄音','MP3'),
+  document.createElement('hr'),dlHead('九首全集'),
+  dlLink('九首合輯_C調.pdf','合輯 C調','PDF'),
+  dlLink('九首合輯_原調.pdf','合輯 原調','PDF'),
+  dlLink('全部譜與MIDI.zip','全部譜與 MIDI','ZIP'));
 }
-s.addEventListener('change',renderDl);document.querySelectorAll('[name=k]').forEach(x=>x.addEventListener('change',renderDl));renderDl();
+s.addEventListener('change',renderDl);renderDl();
+document.addEventListener('click',e=>{if(dl.open&&!dl.contains(e.target))dl.open=false;});
 
 </script></body></html>
