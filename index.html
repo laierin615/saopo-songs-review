@@ -59,8 +59,7 @@ audio{height:36px}
 <div id="top"><h1>Sa'opo 膽曼 · 生活歌謠</h1>
 <details id="dl"><summary>下載</summary><div id="dllist"></div></details></div>
 <header><select id="s" aria-label="歌號"></select>
-<label><input type="radio" name="k" value="C調" checked>C調</label>
-<label><input type="radio" name="k" value="原調">原調</label>
+<label>調 <select id="k" aria-label="調"></select></label>
 <label>速度 <select id="r"><option value="0.75">0.75倍</option><option value="0.5">0.5倍</option></select></label>
 <audio id="a" controls preload="metadata"></audio>
 </header>
@@ -78,7 +77,7 @@ audio{height:36px}
 <footer id="kbfoot">
 <div id="kbbar"><button id="kbtoggle" type="button">鍵盤</button>
 <span id="kbopts" hidden><label><input type="radio" name="kbm" value="rec" checked>對齊錄音音高</label>
-<label><input type="radio" name="kbm" value="C">C調（1＝C）</label>
+<label><input type="radio" name="kbm" value="C">所選的調</label>
 <span id="kbinfo"></span></span></div>
 <div id="kbwrap" hidden><div class="kb" id="kb"></div></div>
 </footer>
@@ -87,13 +86,24 @@ const keys={1:'Db',2:'D',3:'D',4:'B',5:'B',6:'F',7:'F',8:'E',9:'D'};
 const order=[1,2,3,4,5,6,7,8,9],finalized=new Set(order);
 const titles={"1": "21步舞", "2": "46 飲酒時會唱的歌", "3": "47 Cangrah 阿嬤唱的歌謠", "4": "37.2 長輩要給年紀小的人酒時唱的歌", "5": "35 Tasoki 背帶", "6": "32 遠洋捕魚會唱的歌", "7": "7 漂亮手勢", "8": "30 走走踏", "9": "9 變調 na lo wan"};
 const optLabel=n=>'第'+n+'首 '+titles[n];
+const TKEYS=["C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"],tmap={"1": {"A": {"do": 57, "pages": 1}, "Ab": {"do": 56, "pages": 1}, "B": {"do": 59, "pages": 1}, "Bb": {"do": 58, "pages": 1}, "D": {"do": 62, "pages": 1}, "E": {"do": 64, "pages": 1}, "Eb": {"do": 63, "pages": 1}, "F": {"do": 65, "pages": 1}, "G": {"do": 67, "pages": 1}, "Gb": {"do": 66, "pages": 1}}, "2": {"A": {"do": 57, "pages": 1}, "Ab": {"do": 68, "pages": 1}, "B": {"do": 59, "pages": 1}, "Bb": {"do": 58, "pages": 1}, "Db": {"do": 61, "pages": 1}, "E": {"do": 64, "pages": 1}, "Eb": {"do": 63, "pages": 1}, "F": {"do": 65, "pages": 1}, "G": {"do": 67, "pages": 1}, "Gb": {"do": 66, "pages": 1}}, "3": {"A": {"do": 57, "pages": 1}, "Ab": {"do": 68, "pages": 1}, "B": {"do": 59, "pages": 1}, "Bb": {"do": 58, "pages": 1}, "Db": {"do": 61, "pages": 1}, "E": {"do": 64, "pages": 1}, "Eb": {"do": 63, "pages": 1}, "F": {"do": 65, "pages": 1}, "G": {"do": 67, "pages": 1}, "Gb": {"do": 66, "pages": 1}}, "4": {"A": {"do": 57, "pages": 1}, "Ab": {"do": 56, "pages": 1}, "Bb": {"do": 58, "pages": 1}, "D": {"do": 62, "pages": 1}, "Db": {"do": 61, "pages": 1}, "E": {"do": 64, "pages": 1}, "Eb": {"do": 63, "pages": 1}, "F": {"do": 65, "pages": 1}, "G": {"do": 55, "pages": 1}, "Gb": {"do": 54, "pages": 1}}, "5": {"A": {"do": 57, "pages": 1}, "Ab": {"do": 56, "pages": 1}, "Bb": {"do": 58, "pages": 1}, "D": {"do": 62, "pages": 1}, "Db": {"do": 61, "pages": 1}, "E": {"do": 64, "pages": 1}, "Eb": {"do": 63, "pages": 1}, "F": {"do": 65, "pages": 1}, "G": {"do": 55, "pages": 1}, "Gb": {"do": 54, "pages": 1}}, "6": {"A": {"do": 69, "pages": 1}, "Ab": {"do": 68, "pages": 1}, "B": {"do": 71, "pages": 1}, "Bb": {"do": 70, "pages": 1}, "D": {"do": 62, "pages": 1}, "Db": {"do": 61, "pages": 1}, "E": {"do": 64, "pages": 1}, "Eb": {"do": 63, "pages": 1}, "G": {"do": 67, "pages": 1}, "Gb": {"do": 66, "pages": 1}}, "7": {"A": {"do": 69, "pages": 1}, "Ab": {"do": 68, "pages": 1}, "B": {"do": 71, "pages": 1}, "Bb": {"do": 70, "pages": 1}, "D": {"do": 62, "pages": 1}, "Db": {"do": 61, "pages": 1}, "E": {"do": 64, "pages": 1}, "Eb": {"do": 63, "pages": 1}, "G": {"do": 67, "pages": 1}, "Gb": {"do": 66, "pages": 1}}, "8": {"A": {"do": 69, "pages": 1}, "Ab": {"do": 68, "pages": 1}, "B": {"do": 59, "pages": 1}, "Bb": {"do": 70, "pages": 1}, "D": {"do": 62, "pages": 1}, "Db": {"do": 61, "pages": 1}, "Eb": {"do": 63, "pages": 1}, "F": {"do": 65, "pages": 1}, "G": {"do": 67, "pages": 1}, "Gb": {"do": 66, "pages": 1}}, "9": {"A": {"do": 57, "pages": 1}, "Ab": {"do": 68, "pages": 1}, "B": {"do": 59, "pages": 1}, "Bb": {"do": 58, "pages": 1}, "Db": {"do": 61, "pages": 1}, "E": {"do": 64, "pages": 1}, "Eb": {"do": 63, "pages": 1}, "F": {"do": 65, "pages": 1}, "G": {"do": 67, "pages": 1}, "Gb": {"do": 66, "pages": 1}}};
 const s=document.getElementById('s'),a=document.getElementById('a'),f=document.getElementById('f'),r=document.getElementById('r'),status=document.getElementById('status');
 let manifest={scores:{},drafts:{}},shown='',audioSong='',audioRatio=.75;
 order.forEach(n=>s.add(new Option(optLabel(n),n)));
 let saved={};try{saved=JSON.parse(localStorage.getItem('saopo-listen')||'{}')||{};}catch{}
 s.value=order.includes(Number(saved.song))?saved.song:'1';r.value=['0.75','0.5'].includes(saved.rate)?saved.rate:'0.75';
-const radio=document.querySelector('[name=k][value="'+(saved.key==='原調'?'原調':'C調')+'"]');radio.checked=true;
-function selectedKey(){return document.querySelector('[name=k]:checked').value;}
+const kSel=document.getElementById('k');
+const shownKey=k=>k.length>1?k[0]+'♭':k;
+function fillKeys(){
+ const n=s.value,prev=kSel.value||saved.key||'C調';
+ kSel.replaceChildren(new Option('C 調（含簡譜）','C調'));
+ TKEYS.forEach(K=>{if(K==='C')return;const orig=K===keys[n];kSel.add(new Option('1='+shownKey(K)+(orig?'（原調）':''),orig?'原調':K));});
+ const want=prev===keys[n]?'原調':prev;kSel.value=[...kSel.options].some(o=>o.value===want)?want:'C調';
+}
+fillKeys();
+function selectedKey(){return kSel.value;}
+function keyTonic(n){const k=kSel.value;return k==='C調'||k==='原調'?{midi:doMidi[n],c:cents[n]}:{midi:tmap[n][k].do,c:0};}
+function syShift(n){const t=keyTonic(n);return t.midi-60+t.c/100;}
 function persist(){localStorage.setItem('saopo-listen',JSON.stringify({song:s.value,rate:r.value,key:selectedKey()}));}
 function renderStatus(){
  const stored=(manifest.drafts||{})[s.value];
@@ -102,11 +112,11 @@ function renderStatus(){
  status.textContent=incomplete.length?incomplete.map(p=>'第'+(p.i+1)+'小節 '+p.x+'/4拍').join('；')+'；譜面保留上一版':draft?'修改已記錄，等待更新譜面':finalized.has(Number(s.value))?'已定稿':'逐小節聽校中';
 }
 function renderScore(force=false){
- const n=s.value,k=selectedKey(),entry=manifest.scores[n+':'+k];
+ const n=s.value,k=selectedKey(),tr=k!=='C調'&&k!=='原調',entry=tr?{version:'t',pages:tmap[n][k].pages}:manifest.scores[n+':'+k];
  const revision=n+':'+k+':'+(entry?entry.version:'initial');
  renderStatus();if(!force&&revision===shown)return;shown=revision;
  const lab=k==='C調'?'C調':(n==='5'?'B調':'原調'+keys[n]);
- const base='聽校頁_譜圖/第'+n+'首_五線譜＋簡譜_女聲主旋律_'+lab;
+ const base=tr?'移調/第'+n+'首/第'+n+'首_五線譜_'+k+'調':'聽校頁_譜圖/第'+n+'首_五線譜＋簡譜_女聲主旋律_'+lab;
  const count=entry?entry.pages:(n==='8'?2:1);
  while(f.children.length>count)f.lastElementChild.remove();
  for(let i=0;i<count;i++){
@@ -124,9 +134,9 @@ function renderAudio(sameSong=false){
  a.onloadedmetadata=()=>{if(position>0)a.currentTime=Math.min(position,a.duration||position);if(sameSong&&wasPlaying)a.play().catch(()=>{});};
  a.src=url;
 }
-s.onchange=()=>{renderScore();renderAudio(false);persist();};
+s.onchange=()=>{fillKeys();renderScore();renderAudio(false);persist();};
 r.onchange=()=>{renderAudio(audioSong===s.value);persist();};
-document.querySelectorAll('[name=k]').forEach(x=>x.onchange=()=>renderScore());
+kSel.addEventListener('change',()=>{renderScore();persist();if(!kbwrap.hidden)buildKb();syStopAll();});
 let polling=false;
 async function poll(){
  if(polling)return;polling=true;
@@ -141,7 +151,7 @@ const deg=['1','#1','2','b3','3','4','#4','5','#5','6','b7','7'];
 const kb=document.getElementById('kb'),kbwrap=document.getElementById('kbwrap'),kbopts=document.getElementById('kbopts'),kbinfo=document.getElementById('kbinfo');
 let actx=null;const voices=new Map();
 function kbMode(){return document.querySelector('[name=kbm]:checked').value;}
-function base(){const n=Number(s.value);return kbMode()==='C'?{midi:60,c:0}:{midi:doMidi[n],c:cents[n]};}
+function base(){const n=Number(s.value);if(kbMode()==='rec')return {midi:doMidi[n],c:cents[n]};return kSel.value==='C調'?{midi:60,c:0}:keyTonic(n);}
 function label(d){const o=Math.floor(d/12),k=((d%12)+12)%12;return deg[k]+(o<0?'̣'.repeat(-o):o>0?'̇'.repeat(o):'');}
 function buildKb(){
  const b=base();kb.innerHTML='';let lo=b.midi-8,hi=b.midi+19;while(names[lo%12].includes('#'))lo--;while(names[hi%12].includes('#'))hi++;
@@ -151,7 +161,7 @@ function buildKb(){
  for(let m=lo;m<=hi;m++){if(!names[m%12].includes('#'))continue;const i=whites.filter(x=>x<m).length;if(i===0)continue;
   const e=document.createElement('div');const d=m-b.midi;e.className='b'+([0,2,4,5,7,9,11].includes(((d%12)+12)%12)?'':' chroma');
   e.style.left=(i*W-W*0.32)+'%';e.style.width=(W*0.64)+'%';e.textContent=label(d);e.dataset.m=m;kb.appendChild(e);}
- const n=Number(s.value);kbinfo.textContent=kbMode()==='C'?'1＝C':'1＝'+names[doMidi[n]%12]+(cents[n]?'（'+(cents[n]>0?'+':'')+cents[n]+' 音分，對齊第'+n+'首錄音）':'');
+ const n=Number(s.value);kbinfo.textContent=kbMode()==='C'?'1＝'+shownKey(TKEYS[base().midi%12]):'1＝'+names[doMidi[n]%12]+(cents[n]?'（'+(cents[n]>0?'+':'')+cents[n]+' 音分，對齊第'+n+'首錄音）':'');
 }
 function noteOn(el){
  if(!actx)actx=new (window.AudioContext||window.webkitAudioContext)();
@@ -225,7 +235,7 @@ function syTick(){
  const c=syCfg(),tf=c.tempo/100,now=syNow(),look=0.25*audioRatio,n=Number(s.value);
  while(sy.next<sy.notes.length){const x=sy.notes[sy.next],r=syNoteReal(x);if(r>now+look)break;
   const wait=(r-now)/audioRatio,dur=x.d/tf/audioRatio;
-  if(r+x.d/tf>now){const freq=440*Math.pow(2,(x.m-60+doMidi[n]-69+cents[n]/100)/12);syVoice(actx.currentTime+Math.max(0,wait),freq,Math.max(0.05,dur+Math.min(0,wait)));}
+  if(r+x.d/tf>now){const freq=440*Math.pow(2,(x.m-69+syShift(n))/12);syVoice(actx.currentTime+Math.max(0,wait),freq,Math.max(0.05,dur+Math.min(0,wait)));}
   sy.next++;}
 }
 syEl('sytoggle').onclick=()=>{sy.on=!sy.on;syEl('syopts').hidden=!sy.on;syEl('sytoggle').style.fontWeight=sy.on?'700':'';
@@ -240,7 +250,7 @@ syEl('sysolo').onclick=async()=>{
  await syLoad();if(!sy.notes.length)return;
  a.pause();syStopAll();
  const n=Number(s.value),sp=Number(r.value)*syCfg().tempo/100,t0=actx.currentTime+0.1;
- sy.notes.forEach(x=>syVoice(t0+x.t/sp,440*Math.pow(2,(x.m-60+doMidi[n]-69+cents[n]/100)/12),Math.max(0.05,x.d/sp)));
+ sy.notes.forEach(x=>syVoice(t0+x.t/sp,440*Math.pow(2,(x.m-69+syShift(n))/12),Math.max(0.05,x.d/sp)));
  const last=sy.notes[sy.notes.length-1],total=(last.t+last.d)/sp;
  solo={end:setTimeout(soloStop,(total+0.5)*1000)};syEl('sysolo').textContent='■ 停止譜音';
 };
@@ -261,8 +271,9 @@ const dl=document.getElementById('dl'),dllist=document.getElementById('dllist');
 function dlLink(path,text,ext){const e=document.createElement('a');e.href=encodeURI(path);e.download=path.split('/').pop();e.textContent=text;const t=document.createElement('span');t.textContent=ext;e.appendChild(t);return e;}
 function dlHead(text){const e=document.createElement('h4');e.textContent=text;return e;}
 function renderDl(){
- const n=s.value,lab=n==='5'?'B調':'原調'+keys[n],d='第'+n+'首/第'+n+'首_';
- dllist.replaceChildren(dlHead('第'+n+'首　'+titles[n]),
+ const n=s.value,lab=n==='5'?'B調':'原調'+keys[n],d='第'+n+'首/第'+n+'首_',k=kSel.value;
+ const tr=k!=='C調'&&k!=='原調'?[dlLink('移調/'+d+'五線譜_'+k+'調.pdf','1='+shownKey(k)+' 五線譜','PDF'),dlLink('移調/'+d+'旋律_'+k+'調.mid','1='+shownKey(k)+' 旋律','MIDI')]:[];
+ dllist.replaceChildren(dlHead('第'+n+'首　'+titles[n]),...tr,
   dlLink(d+'五線譜＋簡譜_女聲主旋律_C調.pdf','C調譜','PDF'),
   dlLink(d+'五線譜＋簡譜_女聲主旋律_'+lab+'.pdf',lab+'譜','PDF'),
   dlLink(d+'旋律_女聲主旋律_C調.mid','C調旋律','MIDI'),
@@ -274,7 +285,7 @@ function renderDl(){
   dlLink('九首合輯_原調.pdf','合輯 原調','PDF'),
   dlLink('全部譜與MIDI.zip','全部譜與 MIDI','ZIP'));
 }
-s.addEventListener('change',renderDl);renderDl();
+s.addEventListener('change',renderDl);kSel.addEventListener('change',renderDl);renderDl();
 document.addEventListener('click',e=>{if(dl.open&&!dl.contains(e.target))dl.open=false;});
 
 </script></body></html>
