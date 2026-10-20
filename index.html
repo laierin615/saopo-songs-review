@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8"><title>膽曼 Sa'opo 歌謠採譜聽校</title>
+<style>
+body{margin:0;font-family:-apple-system,"PingFang TC",sans-serif;background:#fff}
+#intro{padding:8px 12px;font-size:14px;color:#333;background:#eef4ff;border-bottom:1px solid #d6e2f5}
+#intro b{font-size:16px}
+#dl{flex-basis:100%;font-size:14px}#dl summary{cursor:pointer;font-weight:600}
+#dllist{display:flex;flex-wrap:wrap;gap:6px 14px;padding:6px 0}#dllist a{color:#1a5fb4}
+#report{color:#b03a2e}
+header{position:sticky;top:0;z-index:1;background:#f4f4f4;padding:8px 12px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;border-bottom:1px solid #ddd}
+select,button{font-size:15px}audio{width:420px;max-width:100%}
+#status{font-size:13px;color:#555;flex-basis:100%;min-height:18px}
+#kbbar{flex-basis:100%;display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:13px;color:#444}
+#kbwrap{flex-basis:100%;overflow-x:auto}
+#kbfoot{position:fixed;left:0;right:0;bottom:0;z-index:2;background:#f4f4f4;border-top:1px solid #ddd;padding:4px 12px;max-height:40vh;overflow:auto;display:flex;flex-wrap:wrap;gap:6px}
+body{padding-bottom:var(--kbh,48px)}
+
+#sybar{flex-basis:100%;display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:13px;color:#444}
+#syopts{display:inline-flex;gap:8px;align-items:center;flex-wrap:wrap}#syopts[hidden]{display:none}
+#syinfo{color:#2a6}
+#sub{padding:4px 12px;display:flex;gap:10px;flex-wrap:wrap;background:#fafafa;border-bottom:1px solid #eee}
+
+
+.kb{position:relative;height:84px;display:flex;min-width:560px;max-width:900px;user-select:none;-webkit-user-select:none;touch-action:none}
+.kb .w{flex:1;border:1px solid #888;border-radius:0 0 5px 5px;background:#fff;margin-right:-1px;display:flex;align-items:flex-end;justify-content:center;padding-bottom:6px;font:600 15px -apple-system,sans-serif;color:#222;cursor:pointer}
+.kb .b{position:absolute;top:0;height:66%;background:#222;border-radius:0 0 4px 4px;display:flex;align-items:flex-end;justify-content:center;padding-bottom:5px;font:600 12px -apple-system,sans-serif;color:#eee;cursor:pointer;z-index:2}
+.kb .w.on{background:#ffe08a}.kb .b.on{background:#b8860b}
+.kb .w.do{color:#c0392b}
+.kb .w.chroma,.kb .b.chroma{font-weight:400;opacity:.65}
+#f img{width:100%;max-width:900px;display:block;margin:0 auto}
+</style></head><body>
+<div id="intro"><b>膽曼 Sa'opo 生活歌謠｜女聲主旋律採譜（九首定稿）</b><br>選歌號後可看譜、聽慢速錄音；「🎼 譜音」可讓譜與錄音一起播放。發現譜和錄音不合，請按「回報問題」並寫小節號。</div>
+<header><select id="s" aria-label="歌號"></select>
+<label><input type="radio" name="k" value="C調" checked>C調</label>
+<label><input type="radio" name="k" value="原調">原調</label>
+<label>速度 <select id="r"><option value="0.75">0.75倍</option><option value="0.5">0.5倍</option></select></label>
+<audio id="a" controls preload="metadata"></audio>
+</header>
+<div id="sub"><div id="sybar"><button id="sytoggle" type="button">🎼 譜音</button>
+<span id="syopts" hidden>
+<button id="sysolo" type="button">▶ 只播譜音</button>
+<button id="syset" type="button" title="播到譜上第一個音時按">設為譜的第一個音</button>
+<button id="syminus" type="button" aria-label="起點提早 0.1 秒">−0.1秒</button><button id="syplus" type="button" aria-label="起點延後 0.1 秒">＋0.1秒</button>
+<label>速度 <input id="sytempo" type="range" min="80" max="120" step="1" value="100"> <span id="sytempov">100%</span></label>
+<label>錄音音量 <input id="syav" type="range" min="0" max="100" value="100"></label>
+<label>譜音音量 <input id="sysv" type="range" min="0" max="100" value="60"></label>
+<span id="syinfo"></span></span></div>
+<details id="dl"><summary>⬇ 下載</summary><div id="dllist"></div></details>
+<div id="status" role="status" aria-live="polite"></div></div>
+<div id="f"></div>
+<footer id="kbfoot">
+<div id="kbbar"><button id="kbtoggle" type="button">🎹 鍵盤</button>
+<span id="kbopts" hidden><label><input type="radio" name="kbm" value="rec" checked>對齊錄音音高</label>
+<label><input type="radio" name="kbm" value="C">C調（1＝C）</label>
+<span id="kbinfo"></span></span></div>
+<div id="kbwrap" hidden><div class="kb" id="kb"></div></div>
+</footer>
+<script>
+const keys={1:'Db',2:'D',3:'D',4:'B',5:'B',6:'F',7:'F',8:'E',9:'D'};
+const order=[1,2,3,4,5,6,7,8,9],finalized=new Set(order);
+const titles={"1": "21步舞", "2": "46 飲酒時會唱的歌", "3": "47 Cangrah 阿嬤唱的歌謠", "4": "37.2 長輩要給年紀小的人酒時唱的歌", "5": "35 Tasoki 背帶", "6": "32 遠洋捕魚會唱的歌", "7": "7 漂亮手勢", "8": "30 走走踏", "9": "9 變調 na lo wan"};
+const optLabel=n=>'第'+n+'首 '+titles[n];
+const s=document.getElementById('s'),a=document.getElementById('a'),f=document.getElementById('f'),r=document.getElementById('r'),status=document.getElementById('status');
+let manifest={scores:{},drafts:{}},shown='',audioSong='',audioRatio=.75;
+order.forEach(n=>s.add(new Option(optLabel(n),n)));
+let saved={};try{saved=JSON.parse(localStorage.getItem('saopo-listen')||'{}')||{};}catch{}
+s.value=order.includes(Number(saved.song))?saved.song:'1';r.value=['0.75','0.5'].includes(saved.rate)?saved.rate:'0.75';
+const radio=document.querySelector('[name=k][value="'+(saved.key==='原調'?'原調':'C調')+'"]');radio.checked=true;
+function selectedKey(){return document.querySelector('[name=k]:checked').value;}
+function persist(){localStorage.setItem('saopo-listen',JSON.stringify({song:s.value,rate:r.value,key:selectedKey()}));}
+function renderStatus(){
+ const stored=(manifest.drafts||{})[s.value];
+ const draft=stored&&stored.dirty.includes(selectedKey())?stored:null;
+ const incomplete=draft?draft.totals.map((x,i)=>({x,i})).filter(p=>p.x!=='4'):[];
+ status.textContent=incomplete.length?incomplete.map(p=>'第'+(p.i+1)+'小節 '+p.x+'/4拍').join('；')+'；譜面保留上一版':draft?'修改已記錄，等待更新譜面':finalized.has(Number(s.value))?'已定稿':'逐小節聽校中';
+}
+function renderScore(force=false){
+ const n=s.value,k=selectedKey(),entry=manifest.scores[n+':'+k];
+ const revision=n+':'+k+':'+(entry?entry.version:'initial');
+ renderStatus();if(!force&&revision===shown)return;shown=revision;
+ const lab=k==='C調'?'C調':(n==='5'?'B調':'原調'+keys[n]);
+ const base='聽校頁_譜圖/第'+n+'首_五線譜＋簡譜_女聲主旋律_'+lab;
+ const count=entry?entry.pages:(n==='8'?2:1);
+ while(f.children.length>count)f.lastElementChild.remove();
+ for(let i=0;i<count;i++){
+  let img=f.children[i];if(!img){img=document.createElement('img');f.appendChild(img);}
+  img.alt='第'+n+'首 '+k+' 第'+(i+1)+'頁';
+  img.src=encodeURI(base+'-'+(i+1)+'.png')+'?v='+encodeURIComponent(entry?entry.version:'initial');
+ }
+ persist();
+}
+function renderAudio(sameSong=false){
+ const n=s.value,newRatio=Number(r.value),wasPlaying=!a.paused;
+ const position=sameSong?a.currentTime*audioRatio/newRatio:0;
+ const url=encodeURI(('第'+n+'首/')+'第'+n+'首_'+r.value+'倍慢速.mp3');
+ audioSong=n;audioRatio=newRatio;
+ a.onloadedmetadata=()=>{if(position>0)a.currentTime=Math.min(position,a.duration||position);if(sameSong&&wasPlaying)a.play().catch(()=>{});};
+ a.src=url;
+}
+s.onchange=()=>{renderScore();renderAudio(false);persist();};
+r.onchange=()=>{renderAudio(audioSong===s.value);persist();};
+document.querySelectorAll('[name=k]').forEach(x=>x.onchange=()=>renderScore());
+let polling=false;
+async function poll(){
+ if(polling)return;polling=true;
+ try{const response=await fetch('聽校頁_版本.json',{cache:'no-store'});if(response.ok){const next=await response.json();if(next&&next.scores){manifest=next;if(next.finalized){finalized.clear();next.finalized.forEach(n=>finalized.add(n));for(const option of s.options)option.textContent=optLabel(option.value);}renderScore();}}}
+ catch{}finally{polling=false;}
+}
+// ---- 鍵盤：鍵上標簡譜級數；對齊錄音＝原調主音＋整體偏音 ----
+const doMidi={1:61,2:62,3:62,4:59,5:59,6:65,7:65,8:64,9:62};
+const cents={1:-23,2:37,3:47,4:-43,5:-33,6:-33,7:37,8:-3,9:27};
+const names=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+const deg=['1','#1','2','b3','3','4','#4','5','#5','6','b7','7'];
+const kb=document.getElementById('kb'),kbwrap=document.getElementById('kbwrap'),kbopts=document.getElementById('kbopts'),kbinfo=document.getElementById('kbinfo');
+let actx=null;const voices=new Map();
+function kbMode(){return document.querySelector('[name=kbm]:checked').value;}
+function base(){const n=Number(s.value);return kbMode()==='C'?{midi:60,c:0}:{midi:doMidi[n],c:cents[n]};}
+function label(d){const o=Math.floor(d/12),k=((d%12)+12)%12;return deg[k]+(o<0?'̣'.repeat(-o):o>0?'̇'.repeat(o):'');}
+function buildKb(){
+ const b=base();kb.innerHTML='';let lo=b.midi-8,hi=b.midi+19;while(names[lo%12].includes('#'))lo--;while(names[hi%12].includes('#'))hi++;
+ const whites=[];for(let m=lo;m<=hi;m++)if(!names[m%12].includes('#'))whites.push(m);
+ const W=100/whites.length;
+ whites.forEach(m=>{const e=document.createElement('div');const d=m-b.midi;e.className='w'+([0,2,4,5,7,9,11].includes(((d%12)+12)%12)?'':' chroma')+(((d%12)+12)%12===0?' do':'');e.textContent=label(d);e.dataset.m=m;kb.appendChild(e);});
+ for(let m=lo;m<=hi;m++){if(!names[m%12].includes('#'))continue;const i=whites.filter(x=>x<m).length;if(i===0)continue;
+  const e=document.createElement('div');const d=m-b.midi;e.className='b'+([0,2,4,5,7,9,11].includes(((d%12)+12)%12)?'':' chroma');
+  e.style.left=(i*W-W*0.32)+'%';e.style.width=(W*0.64)+'%';e.textContent=label(d);e.dataset.m=m;kb.appendChild(e);}
+ const n=Number(s.value);kbinfo.textContent=kbMode()==='C'?'1＝C':'1＝'+names[doMidi[n]%12]+(cents[n]?'（'+(cents[n]>0?'+':'')+cents[n]+' 音分，對齊第'+n+'首錄音）':'');
+}
+function noteOn(el){
+ if(!actx)actx=new (window.AudioContext||window.webkitAudioContext)();
+ if(actx.state==='suspended')actx.resume();
+ const b=base(),m=Number(el.dataset.m),f=440*Math.pow(2,(m-69+b.c/100)/12),t=actx.currentTime;
+ const g=actx.createGain();g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(0.35,t+0.008);g.gain.exponentialRampToValueAtTime(0.12,t+0.6);g.gain.exponentialRampToValueAtTime(0.0001,t+3);g.connect(actx.destination);
+ const oscs=[[1,'triangle',1],[2,'sine',0.35],[3,'sine',0.12]].map(([h,type,v])=>{const o=actx.createOscillator(),gg=actx.createGain();o.type=type;o.frequency.value=f*h;gg.gain.value=v;o.connect(gg);gg.connect(g);o.start(t);o.stop(t+3.1);return o;});
+ voices.set(el,{g,oscs});el.classList.add('on');
+}
+function noteOff(el){const v=voices.get(el);if(!v)return;const t=actx.currentTime;v.g.gain.cancelScheduledValues(t);v.g.gain.setValueAtTime(Math.max(v.g.gain.value,0.0001),t);v.g.gain.exponentialRampToValueAtTime(0.0001,t+0.35);v.oscs.forEach(o=>{try{o.stop(t+0.4)}catch{}});voices.delete(el);el.classList.remove('on');}
+kb.addEventListener('pointerdown',e=>{const el=e.target.closest('[data-m]');if(!el)return;e.preventDefault();noteOn(el);});
+['pointerup','pointerleave','pointercancel'].forEach(ev=>kb.addEventListener(ev,()=>{[...voices.keys()].forEach(noteOff);}));
+document.getElementById('kbtoggle').onclick=()=>{const show=kbwrap.hidden;kbwrap.hidden=!show;kbopts.hidden=!show;if(show)buildKb();try{localStorage.setItem('saopo-kb',show?'1':'0')}catch{}};
+document.querySelectorAll('[name=kbm]').forEach(x=>x.onchange=buildKb);
+s.addEventListener('change',()=>{if(!kbwrap.hidden)buildKb();});
+try{if(localStorage.getItem('saopo-kb')==='1'){kbwrap.hidden=false;kbopts.hidden=false;buildKb();}}catch{}
+// ---- 譜音：讀 C 調 MIDI，移到錄音的主音與音分，跟著音檔時間播放 ----
+// 時間換算：錄音真實秒＝音檔秒×倍速比；譜第 t 秒的音落在真實秒 起點＋t÷速度。
+const sy={on:false,notes:[],song:'',ver:'',next:0,timer:null,live:[],tf:1};
+const syEl=id=>document.getElementById(id);
+let syStore={};try{syStore=JSON.parse(localStorage.getItem('saopo-sync')||'{}')||{};}catch{}
+function syCfg(){const n=s.value;return syStore[n]||(syStore[n]={start:null,tempo:100});}
+function sySave(){try{localStorage.setItem('saopo-sync',JSON.stringify(syStore));}catch{}}
+function parseMidi(buf){
+ const d=new DataView(buf);let p=0;const str=n=>{let x='';for(let i=0;i<n;i++)x+=String.fromCharCode(d.getUint8(p+i));p+=n;return x;};
+ if(str(4)!=='MThd')throw Error('不是 MIDI');p+=4;p+=2;const ntr=d.getUint16(p);p+=2;const div=d.getUint16(p);p+=2;
+ const evs=[];
+ for(let k=0;k<ntr;k++){
+  while(str(4)!=='MTrk'){p+=d.getUint32(p)+4;}const len=d.getUint32(p);p+=4;const end=p+len;let tick=0,run=0;
+  const vlq=()=>{let v=0,b;do{b=d.getUint8(p++);v=(v<<7)|(b&127);}while(b&128);return v;};
+  while(p<end){tick+=vlq();let st=d.getUint8(p);if(st&128)p++;else st=run;
+   if(st===0xFF){const ty=d.getUint8(p++),l=vlq();if(ty===0x51)evs.push({tick,tempo:(d.getUint8(p)<<16)|(d.getUint8(p+1)<<8)|d.getUint8(p+2)});p+=l;}
+   else if(st===0xF0||st===0xF7){p+=vlq();}
+   else{run=st;const hi=st&0xF0;const a1=d.getUint8(p++);const a2=(hi===0xC0||hi===0xD0)?0:d.getUint8(p++);
+    if(hi===0x90&&a2>0)evs.push({tick,on:a1});else if(hi===0x80||(hi===0x90&&a2===0))evs.push({tick,off:a1});}
+  }
+  p=end;
+ }
+ evs.sort((x,y)=>x.tick-y.tick||(x.off!==undefined?-1:1));
+ let tempo=500000,lastTick=0,sec=0;const open={},notes=[];
+ for(const e of evs){sec+=(e.tick-lastTick)/div*tempo/1e6;lastTick=e.tick;
+  if(e.tempo)tempo=e.tempo;else if(e.on!==undefined)(open[e.on]=open[e.on]||[]).push(sec);
+  else if(e.off!==undefined&&open[e.off]&&open[e.off].length){const t=open[e.off].shift();notes.push({t,d:sec-t,m:e.off});}}
+ notes.sort((x,y)=>x.t-y.t);const t0=notes.length?notes[0].t:0;notes.forEach(x=>x.t-=t0);return notes;
+}
+async function syLoad(){
+ const n=s.value,entry=manifest.scores[n+':C調'],ver=entry?entry.version:'initial';
+ if(sy.song===n&&sy.ver===ver&&sy.notes.length)return;
+ const url=encodeURI(('第'+n+'首/')+'第'+n+'首_旋律_女聲主旋律_C調.mid')+'?v='+encodeURIComponent(ver);
+ try{const r=await fetch(url,{cache:'no-store'});if(!r.ok)throw Error(r.status);sy.notes=parseMidi(await r.arrayBuffer());sy.song=n;sy.ver=ver;}
+ catch(e){sy.notes=[];syEl('syinfo').textContent='讀不到第'+n+'首的 MIDI';return;}
+ syReset();syInfo();
+}
+function syInfo(){
+ if(!sy.notes.length)return;const c=syCfg();
+ syEl('syinfo').textContent=c.start==null?'尚未設定起點：播到譜上第一個音時按「設為譜的第一個音」':'起點：錄音第 '+c.start.toFixed(2)+' 秒（共 '+sy.notes.length+' 個音）';
+ syEl('sytempo').value=c.tempo;syEl('sytempov').textContent=c.tempo+'%';
+}
+function syStopAll(){if(!actx)return;const t=actx.currentTime;sy.live.forEach(v=>{try{v.g.gain.cancelScheduledValues(t);v.g.gain.setValueAtTime(0.0001,t);v.oscs.forEach(o=>o.stop(t+0.02));}catch{}});sy.live=[];}
+function syNow(){return a.currentTime*audioRatio;} // 錄音真實秒
+function syNoteReal(x){const c=syCfg();return c.start+x.t/(c.tempo/100);}
+function syReset(){if(typeof solo!=="undefined"&&solo)return;syStopAll();const c=syCfg();if(c.start==null){sy.next=sy.notes.length;return;}const now=syNow();sy.next=sy.notes.findIndex(x=>syNoteReal(x)+x.d/(c.tempo/100)>now);if(sy.next<0)sy.next=sy.notes.length;}
+function syVoice(when,freq,dur){
+ const g=actx.createGain(),v=Number(syEl('sysv').value)/100*0.35;g.gain.setValueAtTime(0.0001,when);g.gain.linearRampToValueAtTime(v,when+0.01);g.gain.setValueAtTime(v,when+Math.max(0.02,dur-0.05));g.gain.exponentialRampToValueAtTime(0.0001,when+dur+0.12);g.connect(actx.destination);
+ const oscs=[[1,'triangle',1],[2,'sine',0.3],[3,'sine',0.1]].map(([h,type,vv])=>{const o=actx.createOscillator(),gg=actx.createGain();o.type=type;o.frequency.value=freq*h;gg.gain.value=vv;o.connect(gg);gg.connect(g);o.start(when);o.stop(when+dur+0.15);return o;});
+ const voice={g,oscs};sy.live.push(voice);oscs[0].onended=()=>{sy.live=sy.live.filter(x=>x!==voice);};
+}
+function syTick(){
+ if(!sy.on||a.paused||!sy.notes.length||syCfg().start==null)return;
+ if(!actx)actx=new (window.AudioContext||window.webkitAudioContext)();if(actx.state==='suspended')actx.resume();
+ const c=syCfg(),tf=c.tempo/100,now=syNow(),look=0.25*audioRatio,n=Number(s.value);
+ while(sy.next<sy.notes.length){const x=sy.notes[sy.next],r=syNoteReal(x);if(r>now+look)break;
+  const wait=(r-now)/audioRatio,dur=x.d/tf/audioRatio;
+  if(r+x.d/tf>now){const freq=440*Math.pow(2,(x.m-60+doMidi[n]-69+cents[n]/100)/12);syVoice(actx.currentTime+Math.max(0,wait),freq,Math.max(0.05,dur+Math.min(0,wait)));}
+  sy.next++;}
+}
+syEl('sytoggle').onclick=()=>{sy.on=!sy.on;syEl('syopts').hidden=!sy.on;syEl('sytoggle').style.fontWeight=sy.on?'700':'';
+ if(sy.on){if(!actx)actx=new (window.AudioContext||window.webkitAudioContext)();syLoad().then(syReset);if(!sy.timer)sy.timer=setInterval(syTick,30);}else syStopAll();
+ try{localStorage.setItem('saopo-sy',sy.on?'1':'0')}catch{}};
+// 只播譜音：不看錄音，從頭排好全部音；速度＝倍速選單×譜音速度滑桿
+let solo=null;
+function soloStop(){if(!solo)return;clearTimeout(solo.end);syStopAll();solo=null;syEl('sysolo').textContent='▶ 只播譜音';}
+syEl('sysolo').onclick=async()=>{
+ if(solo){soloStop();return;}
+ if(!actx)actx=new (window.AudioContext||window.webkitAudioContext)();if(actx.state==='suspended')await actx.resume();
+ await syLoad();if(!sy.notes.length)return;
+ a.pause();syStopAll();
+ const n=Number(s.value),sp=Number(r.value)*syCfg().tempo/100,t0=actx.currentTime+0.1;
+ sy.notes.forEach(x=>syVoice(t0+x.t/sp,440*Math.pow(2,(x.m-60+doMidi[n]-69+cents[n]/100)/12),Math.max(0.05,x.d/sp)));
+ const last=sy.notes[sy.notes.length-1],total=(last.t+last.d)/sp;
+ solo={end:setTimeout(soloStop,(total+0.5)*1000)};syEl('sysolo').textContent='■ 停止譜音';
+};
+a.addEventListener('play',soloStop);s.addEventListener('change',soloStop);
+syEl('syset').onclick=()=>{syCfg().start=syNow();sySave();syReset();syInfo();};
+syEl('syminus').onclick=()=>{const c=syCfg();if(c.start==null)return;c.start-=0.1;sySave();syReset();syInfo();};
+syEl('syplus').onclick=()=>{const c=syCfg();if(c.start==null)return;c.start+=0.1;sySave();syReset();syInfo();};
+syEl('sytempo').oninput=e=>{syCfg().tempo=Number(e.target.value);syEl('sytempov').textContent=e.target.value+'%';sySave();syReset();};
+syEl('syav').oninput=e=>{a.volume=Number(e.target.value)/100;};
+['play','seeked','pause','loadedmetadata'].forEach(ev=>a.addEventListener(ev,()=>{syReset();}));
+s.addEventListener('change',()=>{syStopAll();if(sy.on)syLoad().then(()=>{syReset();syInfo();});});
+setInterval(()=>{if(sy.on)syLoad();},1500); // 譜更新後自動換新 MIDI
+try{if(localStorage.getItem('saopo-sy')==='1')syEl('sytoggle').click();}catch{}
+const kbfoot=document.getElementById('kbfoot');new ResizeObserver(()=>document.body.style.setProperty('--kbh',kbfoot.offsetHeight+8+'px')).observe(kbfoot);
+renderScore();renderAudio();poll();
+// ---- 下載與回報 ----
+const dllist=document.getElementById('dllist');
+function dlLink(path,text){const e=document.createElement('a');e.href=encodeURI(path);e.download=path.split('/').pop();e.textContent=text;return e;}
+function renderDl(){
+ const n=s.value,lab=n==='5'?'B調':'原調'+keys[n],d='第'+n+'首/第'+n+'首_',k=selectedKey();
+ dllist.replaceChildren(
+  dlLink(d+'五線譜＋簡譜_女聲主旋律_C調.pdf','第'+n+'首 C調譜 PDF'),
+  dlLink(d+'五線譜＋簡譜_女聲主旋律_'+lab+'.pdf','第'+n+'首 '+lab+'譜 PDF'),
+  dlLink(d+'旋律_女聲主旋律_C調.mid','C調 MIDI'),
+  dlLink(d+'旋律_女聲主旋律_'+lab+'.mid',lab+' MIDI'),
+  dlLink(d+'0.75倍慢速.mp3','0.75倍慢速 mp3'),
+  dlLink(d+'0.5倍慢速.mp3','0.5倍慢速 mp3'),
+  dlLink('九首合輯_女聲主旋律_C調.pdf','九首合輯 C調 PDF'),
+  dlLink('九首合輯_女聲主旋律_原調.pdf','九首合輯 原調 PDF'),
+  dlLink('全部譜與MIDI.zip','全部譜與 MIDI（zip）'));
+ const rp=document.createElement('a');rp.id='report';rp.target='_blank';rp.rel='noopener';rp.textContent='📝 回報問題';
+ rp.href='https://github.com/laierin615/saopo-songs-review/issues/new?title='+encodeURIComponent('第'+n+'首 '+k+' 第＿小節')+'&body='+encodeURIComponent('歌曲：第'+n+'首 '+titles[n]+'\n譜：'+k+'\n小節：\n錄音時間（約幾秒）：\n問題（音高／節奏／歌詞）：\n建議改成：\n');
+ dllist.appendChild(rp);
+}
+s.addEventListener('change',renderDl);document.querySelectorAll('[name=k]').forEach(x=>x.addEventListener('change',renderDl));renderDl();
+
+</script></body></html>

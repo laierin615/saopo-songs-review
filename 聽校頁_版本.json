@@ -1,0 +1,106 @@
+{
+  "scores": {
+    "1:C調": {
+      "version": "1792126124439200000",
+      "pages": 1,
+      "digest": "36311c0fd15fd1e08bf4c71ff949bdb37fb912aa80f36655698dab4663e67249"
+    },
+    "1:原調": {
+      "version": "1792126124608827000",
+      "pages": 1,
+      "digest": "997256e07022bd390bdd932ba1eac69885f3a08aade47ec6b034d3621dc58107"
+    },
+    "2:C調": {
+      "version": "1792126124750513000",
+      "pages": 1,
+      "digest": "57259d409509efde96321c71f0bd5f78219d264d24cbc9ef712dbb0492a129e6"
+    },
+    "2:原調": {
+      "version": "1792126124884618000",
+      "pages": 1,
+      "digest": "b6ba3d5d4fbd35e874a2049da53d271088a5efc31a28dfa15c5684f51ef4f7d6"
+    },
+    "3:C調": {
+      "version": "1792127097129163000",
+      "pages": 1,
+      "digest": "0c57bc4f26531f62e70f9b3620abb0cbcbc9291ad459071bf66b2f3edf9983df"
+    },
+    "3:原調": {
+      "version": "1792127097249581000",
+      "pages": 1,
+      "digest": "62088004da8f77bf827c3ab19ec6d756cbc8aca2aeb7ccdf46d8d6f543eeeaf3"
+    },
+    "4:C調": {
+      "version": "1792129991989486000",
+      "pages": 1,
+      "digest": "b82364297a3464df346217c50feed7ac9cdb79a614c655bacc69d88887ede253"
+    },
+    "4:原調": {
+      "version": "1792129992138144000",
+      "pages": 1,
+      "digest": "21f66bbf7302ed3328e3b609ef6b06430c5805e665463a62aa7e56c053cd50b4"
+    },
+    "5:原調": {
+      "version": "1792135612202253000",
+      "pages": 1,
+      "digest": "a2c8db02444ffa3873becc176160f44783c52ba6ea7b019ca56251198d9cc6fd"
+    },
+    "5:C調": {
+      "version": "1792135612303649000",
+      "pages": 1,
+      "digest": "8e73b26eb73c7e171eea5697b44deb9731d1f4d6d680509cf48e1d19617293a3"
+    },
+    "6:C調": {
+      "version": "1792126125931084000",
+      "pages": 1,
+      "digest": "531759a56518dd50a69ce18c33e804cc0c09157175d241d6eb7181924656487a"
+    },
+    "6:原調": {
+      "version": "1792126126047948000",
+      "pages": 1,
+      "digest": "767781ef857d94fdb084a1b58e178c828e3f0245f8e5910a4cab7d3d22f3aeb1"
+    },
+    "7:C調": {
+      "version": "1792151651233504000",
+      "pages": 1,
+      "digest": "f8e284308116a2217a9160504cf1451fa46e2445f4a7d03aebac5fd54d16cd27"
+    },
+    "7:原調": {
+      "version": "1792151651365504000",
+      "pages": 1,
+      "digest": "36a172a0976a46e6947ee3a5216465c4ad7fa69c6273bb9fcc8954e4622d6b91"
+    },
+    "8:C調": {
+      "version": "1792506205974075000",
+      "pages": 1,
+      "digest": "5cfe2a3847913d66f28371ebd976f7fe8197801b6df20403aff7e018a83791c0"
+    },
+    "8:原調": {
+      "version": "1792506206141623000",
+      "pages": 1,
+      "digest": "9d76113e2acf31bb13bc7aa5a823dac047277c9e9e2e7f87a6aab752e0e06a85"
+    },
+    "9:C調": {
+      "version": "1792158317450686000",
+      "pages": 2,
+      "digest": "e2b61bb132ed18aed9126ef462d2d111115d02af4372e0fd4bdbaaedbb33d78c"
+    },
+    "9:原調": {
+      "version": "1792158318567560000",
+      "pages": 2,
+      "digest": "eac76097222b8dcd7544c05a13fbb747af63eea9e19b0aae17c3053a7d7fe530"
+    }
+  },
+  "drafts": {},
+  "finalized": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ]
+}
