@@ -60,7 +60,7 @@ audio{height:36px}
 <details id="dl"><summary>下載</summary><div id="dllist"></div></details></div>
 <header><select id="s" aria-label="歌號"></select>
 <label>調 <select id="k" aria-label="調"></select></label>
-<label>速度 <select id="r"><option value="0.75">0.75倍</option><option value="0.5">0.5倍</option></select></label>
+<label>速度 <select id="r"><option value="1">原速</option><option value="0.75" selected>0.75倍</option><option value="0.5">0.5倍</option></select></label>
 <audio id="a" controls preload="metadata"></audio>
 </header>
 <div id="sub"><div id="sybar"><button id="sytoggle" type="button">譜音對照</button>
@@ -91,7 +91,7 @@ const s=document.getElementById('s'),a=document.getElementById('a'),f=document.g
 let manifest={scores:{},drafts:{}},shown='',audioSong='',audioRatio=.75;
 order.forEach(n=>s.add(new Option(optLabel(n),n)));
 let saved={};try{saved=JSON.parse(localStorage.getItem('saopo-listen')||'{}')||{};}catch{}
-s.value=order.includes(Number(saved.song))?saved.song:'1';r.value=['0.75','0.5'].includes(saved.rate)?saved.rate:'0.75';
+s.value=order.includes(Number(saved.song))?saved.song:'1';r.value=['1','0.75','0.5'].includes(saved.rate)?saved.rate:'0.75';
 const kSel=document.getElementById('k');
 const shownKey=k=>k.length>1?k[0]+'♭':k;
 function fillKeys(){
@@ -129,7 +129,7 @@ function renderScore(force=false){
 function renderAudio(sameSong=false){
  const n=s.value,newRatio=Number(r.value),wasPlaying=!a.paused;
  const position=sameSong?a.currentTime*audioRatio/newRatio:0;
- const url=encodeURI(('第'+n+'首/')+'第'+n+'首_'+r.value+'倍慢速.mp3');
+ const url=encodeURI(('第'+n+'首/')+'第'+n+'首_'+(r.value==='1'?'原速':r.value+'倍慢速')+'.mp3');
  audioSong=n;audioRatio=newRatio;
  a.onloadedmetadata=()=>{if(position>0)a.currentTime=Math.min(position,a.duration||position);if(sameSong&&wasPlaying)a.play().catch(()=>{});};
  a.src=url;
@@ -278,6 +278,7 @@ function renderDl(){
   dlLink(d+'五線譜＋簡譜_女聲主旋律_'+lab+'.pdf',lab+'譜','PDF'),
   dlLink(d+'旋律_女聲主旋律_C調.mid','C調旋律','MIDI'),
   dlLink(d+'旋律_女聲主旋律_'+lab+'.mid',lab+'旋律','MIDI'),
+  dlLink(d+'原速.mp3','原速錄音','MP3'),
   dlLink(d+'0.75倍慢速.mp3','0.75倍慢速錄音','MP3'),
   dlLink(d+'0.5倍慢速.mp3','0.5倍慢速錄音','MP3'),
   document.createElement('hr'),dlHead('九首全集'),
